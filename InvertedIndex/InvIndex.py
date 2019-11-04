@@ -5,6 +5,7 @@ import os
 path = "{}\*.txt".format(os.getcwd())
 files = glob.glob(path)
 
+
 class invIndx():
     def __init__(self):
         self.catalog = {}
@@ -58,8 +59,32 @@ class invIndx():
 
     def removePunctuation(self,line):
         tr = str.maketrans("", "", string.punctuation)
-        line = line.translate(tr)
+        line=line.translate(tr)
         return line
+
+    def search(self,line):
+        intersection= []
+        keywordsList = []
+        keywords = line.split(" ")
+        for keyword in keywords:
+            keywordList = self.findDocs(keyword)
+            keywordsList.append(keywordList)
+        #---intersection---
+        #If users searches one word then no intersection should be made
+        if len(keywordsList) ==1:
+            return keywordsList
+        else:
+            intersection.append(set(keywordsList[0]))
+            for i in range(1,len(keywordsList)):
+                intersection[0] = list(set(intersection[0]) & set(keywordsList[i]))
+            return intersection
+
+    def findDocs(self,keyword):
+        self.docs = []
+        if  keyword in self.catalog:
+            for a in self.catalog[keyword][1]:
+                self.docs.append(a[1])
+        return self.docs
 
 if __name__ == "__main__":
     myInvertedIndex = invIndx()
