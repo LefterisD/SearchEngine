@@ -5,8 +5,7 @@ import os
 path = "{}\*.txt".format(os.getcwd())
 files = glob.glob(path)
 
-
-class invIndx():
+class InvIndex():
     def __init__(self):
         self.catalog = {}
         self.docs = []
@@ -59,35 +58,11 @@ class invIndx():
 
     def removePunctuation(self,line):
         tr = str.maketrans("", "", string.punctuation)
-        line=line.translate(tr)
+        line = line.translate(tr)
         return line
 
-    def search(self,line):
-        intersection= []
-        keywordsList = []
-        keywords = line.split(" ")
-        for keyword in keywords:
-            keywordList = self.findDocs(keyword)
-            keywordsList.append(keywordList)
-        #---intersection---
-        #If users searches one word then no intersection should be made
-        if len(keywordsList) ==1:
-            return keywordsList
-        else:
-            intersection.append(set(keywordsList[0]))
-            for i in range(1,len(keywordsList)):
-                intersection[0] = list(set(intersection[0]) & set(keywordsList[i]))
-            return intersection
-
-    def findDocs(self,keyword):
-        self.docs = []
-        if  keyword in self.catalog:
-            for a in self.catalog[keyword][1]:
-                self.docs.append(a[1])
-        return self.docs
-
 if __name__ == "__main__":
-    myInvertedIndex = invIndx()
+    myInvertedIndex = InvIndex()
     for name in files:
         with open(name) as file:
             for line in file:
@@ -97,4 +72,3 @@ if __name__ == "__main__":
                     kwd = keyword.split("\n")
                     myInvertedIndex.add(kwd[0],name)
     print(myInvertedIndex.search("new book"))
-    #myInvertedIndex.printCatalog()
