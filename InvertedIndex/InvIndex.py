@@ -1,17 +1,36 @@
 import glob
 import string
 import os
+import math
 
 path = "{}\*.txt".format(os.getcwd())
 files = glob.glob(path)
 
-class InvIndex():
+
+class invIndx():
     def __init__(self):
         self.catalog = {}
         self.docs = []
 
     def search_topK(self,querry,k):
         pass
+
+    def findweight(self,keyword):
+        #print("Keyword:",keyword)
+        weights = []
+        numberOfAppearences = self.catalog[keyword][0]
+        numberOfDocuments = len(self.catalog[keyword][1])
+        idf = abs(math.log(numberOfDocuments/numberOfAppearences))
+        #print("IDF= ",idf)
+        for numberOfTimes in self.catalog[keyword][1]:
+            freq = numberOfTimes[0]
+            #print("freq= ",freq)
+            tf = 1 + math.log(freq)
+            #print("TF= ",tf)
+            w = tf * idf
+            weights.append([w,numberOfTimes[1]])
+        print(weights)
+
 
     def findDocs(self,keyword):
         self.docs = []
@@ -62,13 +81,14 @@ class InvIndex():
         return line
 
 if __name__ == "__main__":
-    myInvertedIndex = InvIndex()
+    myInvertedIndex = invIndx()
     for name in files:
         with open(name) as file:
             for line in file:
                 line = myInvertedIndex.removePunctuation(line)
                 fields = line.split(" ")
                 for keyword in fields:
+                    keyword = keyword.lower()
                     kwd = keyword.split("\n")
                     myInvertedIndex.add(kwd[0],name)
-    print(myInvertedIndex.search("new book"))
+    print(myInvertedIndex.search("Lorem Ipsum"))
